@@ -43,3 +43,10 @@ show the dashboard
 ```SHELL
 weaver single dashboard
 ```
+
+for multi process:
+
+```SHELL
+weaver multi status
+weaver multi dashboard
+```
