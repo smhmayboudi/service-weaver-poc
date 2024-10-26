@@ -6,3 +6,6 @@ listeners.hello = {address = "localhost:12345"}
 
 [single]
 listeners.hello = {address = "localhost:12345"}
+
+["github.com/smhmayboudi/service-weaver-poc/PortReverse"]
+Greeting = "PREFIX"
