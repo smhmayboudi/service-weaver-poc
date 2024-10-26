@@ -25,3 +25,21 @@ go mod tidy
 weaver generate .
 go run .
 ```
+
+run with configuration.
+
+```SHELL
+SERVICEWEAVER_CONFIG=weaver.toml go run .
+```
+
+check the status
+
+```SHELL
+weaver single status
+```
+
+show the dashboard
+
+```SHELL
+weaver single dashboard
+```
