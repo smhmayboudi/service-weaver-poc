@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,8 +18,9 @@ func main() {
 
 type app struct {
 	weaver.Implements[weaver.Main]
-	reverser weaver.Ref[Reverser]
-	hello    weaver.Listener
+	reverse weaver.Ref[PortReverse]
+	cache   weaver.Ref[PortCache]
+	hello   weaver.Listener
 }
 
 func serve(ctx context.Context, app *app) error {
@@ -32,7 +34,21 @@ func serve(ctx context.Context, app *app) error {
 		if name == "" {
 			name = "World"
 		}
-		reversed, err := app.reverser.Get().Reverse(ctx, name)
+
+		// Call the cache.Get method.
+		value, err := app.cache.Get().Get(ctx, "key")
+		if errors.Is(err, weaver.RemoteCallError) {
+			// cache.Get did not execute properly.
+			fmt.Fprint(w, "1", err)
+		} else if err != nil {
+			// cache.Get executed properly, but returned an error.
+			fmt.Fprint(w, "2", err)
+		} else {
+			fmt.Fprint(w, "3", "ok")
+			// cache.Get executed properly and did not return an error.
+		}
+
+		reversed, err := app.reverse.Get().Reverse(ctx, name+value)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

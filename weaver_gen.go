@@ -29,23 +29,42 @@ func init() {
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return main_reflect_stub{caller: caller}
 		},
-		RefData: "⟦6c841a77:wEaVeReDgE:github.com/ServiceWeaver/weaver/Main→github.com/smhmayboudi/service-weaver-poc/Reverser⟧\n⟦17f36ff9:wEaVeRlIsTeNeRs:github.com/ServiceWeaver/weaver/Main→hello⟧\n",
+		RefData: "⟦039ffdc8:wEaVeReDgE:github.com/ServiceWeaver/weaver/Main→github.com/smhmayboudi/service-weaver-poc/PortReverse⟧\n⟦27a66094:wEaVeReDgE:github.com/ServiceWeaver/weaver/Main→github.com/smhmayboudi/service-weaver-poc/PortCache⟧\n⟦17f36ff9:wEaVeRlIsTeNeRs:github.com/ServiceWeaver/weaver/Main→hello⟧\n",
 	})
 	codegen.Register(codegen.Registration{
-		Name:  "github.com/smhmayboudi/service-weaver-poc/Reverser",
-		Iface: reflect.TypeOf((*Reverser)(nil)).Elem(),
-		Impl:  reflect.TypeOf(reverser{}),
+		Name:    "github.com/smhmayboudi/service-weaver-poc/PortCache",
+		Iface:   reflect.TypeOf((*PortCache)(nil)).Elem(),
+		Impl:    reflect.TypeOf(cache{}),
+		NoRetry: []int{0},
 		LocalStubFn: func(impl any, caller string, tracer trace.Tracer) any {
-			return reverser_local_stub{impl: impl.(Reverser), tracer: tracer, reverseMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/Reverser", Method: "Reverse", Remote: false, Generated: true})}
+			return portCache_local_stub{impl: impl.(PortCache), tracer: tracer, appendMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Append", Remote: false, Generated: true}), getMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Get", Remote: false, Generated: true}), putMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Put", Remote: false, Generated: true})}
 		},
 		ClientStubFn: func(stub codegen.Stub, caller string) any {
-			return reverser_client_stub{stub: stub, reverseMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/Reverser", Method: "Reverse", Remote: true, Generated: true})}
+			return portCache_client_stub{stub: stub, appendMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Append", Remote: true, Generated: true}), getMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Get", Remote: true, Generated: true}), putMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Put", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
-			return reverser_server_stub{impl: impl.(Reverser), addLoad: addLoad}
+			return portCache_server_stub{impl: impl.(PortCache), addLoad: addLoad}
 		},
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
-			return reverser_reflect_stub{caller: caller}
+			return portCache_reflect_stub{caller: caller}
+		},
+		RefData: "",
+	})
+	codegen.Register(codegen.Registration{
+		Name:  "github.com/smhmayboudi/service-weaver-poc/PortReverse",
+		Iface: reflect.TypeOf((*PortReverse)(nil)).Elem(),
+		Impl:  reflect.TypeOf(reverse{}),
+		LocalStubFn: func(impl any, caller string, tracer trace.Tracer) any {
+			return portReverse_local_stub{impl: impl.(PortReverse), tracer: tracer, reverseMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortReverse", Method: "Reverse", Remote: false, Generated: true})}
+		},
+		ClientStubFn: func(stub codegen.Stub, caller string) any {
+			return portReverse_client_stub{stub: stub, reverseMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortReverse", Method: "Reverse", Remote: true, Generated: true})}
+		},
+		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
+			return portReverse_server_stub{impl: impl.(PortReverse), addLoad: addLoad}
+		},
+		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
+			return portReverse_reflect_stub{caller: caller}
 		},
 		RefData: "",
 	})
@@ -53,11 +72,13 @@ func init() {
 
 // weaver.InstanceOf checks.
 var _ weaver.InstanceOf[weaver.Main] = (*app)(nil)
-var _ weaver.InstanceOf[Reverser] = (*reverser)(nil)
+var _ weaver.InstanceOf[PortCache] = (*cache)(nil)
+var _ weaver.InstanceOf[PortReverse] = (*reverse)(nil)
 
 // weaver.Router checks.
 var _ weaver.Unrouted = (*app)(nil)
-var _ weaver.Unrouted = (*reverser)(nil)
+var _ weaver.Unrouted = (*cache)(nil)
+var _ weaver.Unrouted = (*reverse)(nil)
 
 // Local stub implementations.
 
@@ -69,23 +90,94 @@ type main_local_stub struct {
 // Check that main_local_stub implements the weaver.Main interface.
 var _ weaver.Main = (*main_local_stub)(nil)
 
-type reverser_local_stub struct {
-	impl           Reverser
+type portCache_local_stub struct {
+	impl          PortCache
+	tracer        trace.Tracer
+	appendMetrics *codegen.MethodMetrics
+	getMetrics    *codegen.MethodMetrics
+	putMetrics    *codegen.MethodMetrics
+}
+
+// Check that portCache_local_stub implements the PortCache interface.
+var _ PortCache = (*portCache_local_stub)(nil)
+
+func (s portCache_local_stub) Append(ctx context.Context, a0 string, a1 string) (err error) {
+	// Update metrics.
+	begin := s.appendMetrics.Begin()
+	defer func() { s.appendMetrics.End(begin, err != nil, 0, 0) }()
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.tracer.Start(ctx, "main.PortCache.Append", trace.WithSpanKind(trace.SpanKindInternal))
+		defer func() {
+			if err != nil {
+				span.RecordError(err)
+				span.SetStatus(codes.Error, err.Error())
+			}
+			span.End()
+		}()
+	}
+
+	return s.impl.Append(ctx, a0, a1)
+}
+
+func (s portCache_local_stub) Get(ctx context.Context, a0 string) (r0 string, err error) {
+	// Update metrics.
+	begin := s.getMetrics.Begin()
+	defer func() { s.getMetrics.End(begin, err != nil, 0, 0) }()
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.tracer.Start(ctx, "main.PortCache.Get", trace.WithSpanKind(trace.SpanKindInternal))
+		defer func() {
+			if err != nil {
+				span.RecordError(err)
+				span.SetStatus(codes.Error, err.Error())
+			}
+			span.End()
+		}()
+	}
+
+	return s.impl.Get(ctx, a0)
+}
+
+func (s portCache_local_stub) Put(ctx context.Context, a0 string, a1 string) (err error) {
+	// Update metrics.
+	begin := s.putMetrics.Begin()
+	defer func() { s.putMetrics.End(begin, err != nil, 0, 0) }()
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.tracer.Start(ctx, "main.PortCache.Put", trace.WithSpanKind(trace.SpanKindInternal))
+		defer func() {
+			if err != nil {
+				span.RecordError(err)
+				span.SetStatus(codes.Error, err.Error())
+			}
+			span.End()
+		}()
+	}
+
+	return s.impl.Put(ctx, a0, a1)
+}
+
+type portReverse_local_stub struct {
+	impl           PortReverse
 	tracer         trace.Tracer
 	reverseMetrics *codegen.MethodMetrics
 }
 
-// Check that reverser_local_stub implements the Reverser interface.
-var _ Reverser = (*reverser_local_stub)(nil)
+// Check that portReverse_local_stub implements the PortReverse interface.
+var _ PortReverse = (*portReverse_local_stub)(nil)
 
-func (s reverser_local_stub) Reverse(ctx context.Context, a0 string) (r0 string, err error) {
+func (s portReverse_local_stub) Reverse(ctx context.Context, a0 string) (r0 string, err error) {
 	// Update metrics.
 	begin := s.reverseMetrics.Begin()
 	defer func() { s.reverseMetrics.End(begin, err != nil, 0, 0) }()
 	span := trace.SpanFromContext(ctx)
 	if span.SpanContext().IsValid() {
 		// Create a child span for this method.
-		ctx, span = s.tracer.Start(ctx, "main.Reverser.Reverse", trace.WithSpanKind(trace.SpanKindInternal))
+		ctx, span = s.tracer.Start(ctx, "main.PortReverse.Reverse", trace.WithSpanKind(trace.SpanKindInternal))
 		defer func() {
 			if err != nil {
 				span.RecordError(err)
@@ -107,15 +199,195 @@ type main_client_stub struct {
 // Check that main_client_stub implements the weaver.Main interface.
 var _ weaver.Main = (*main_client_stub)(nil)
 
-type reverser_client_stub struct {
+type portCache_client_stub struct {
+	stub          codegen.Stub
+	appendMetrics *codegen.MethodMetrics
+	getMetrics    *codegen.MethodMetrics
+	putMetrics    *codegen.MethodMetrics
+}
+
+// Check that portCache_client_stub implements the PortCache interface.
+var _ PortCache = (*portCache_client_stub)(nil)
+
+func (s portCache_client_stub) Append(ctx context.Context, a0 string, a1 string) (err error) {
+	// Update metrics.
+	var requestBytes, replyBytes int
+	begin := s.appendMetrics.Begin()
+	defer func() { s.appendMetrics.End(begin, err != nil, requestBytes, replyBytes) }()
+
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.stub.Tracer().Start(ctx, "main.PortCache.Append", trace.WithSpanKind(trace.SpanKindClient))
+	}
+
+	defer func() {
+		// Catch and return any panics detected during encoding/decoding/rpc.
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+			if err != nil {
+				err = errors.Join(weaver.RemoteCallError, err)
+			}
+		}
+
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
+		}
+		span.End()
+
+	}()
+
+	// Preallocate a buffer of the right size.
+	size := 0
+	size += (4 + len(a0))
+	size += (4 + len(a1))
+	enc := codegen.NewEncoder()
+	enc.Reset(size)
+
+	// Encode arguments.
+	enc.String(a0)
+	enc.String(a1)
+	var shardKey uint64
+
+	// Call the remote method.
+	requestBytes = len(enc.Data())
+	var results []byte
+	results, err = s.stub.Run(ctx, 0, enc.Data(), shardKey)
+	replyBytes = len(results)
+	if err != nil {
+		err = errors.Join(weaver.RemoteCallError, err)
+		return
+	}
+
+	// Decode the results.
+	dec := codegen.NewDecoder(results)
+	err = dec.Error()
+	return
+}
+
+func (s portCache_client_stub) Get(ctx context.Context, a0 string) (r0 string, err error) {
+	// Update metrics.
+	var requestBytes, replyBytes int
+	begin := s.getMetrics.Begin()
+	defer func() { s.getMetrics.End(begin, err != nil, requestBytes, replyBytes) }()
+
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.stub.Tracer().Start(ctx, "main.PortCache.Get", trace.WithSpanKind(trace.SpanKindClient))
+	}
+
+	defer func() {
+		// Catch and return any panics detected during encoding/decoding/rpc.
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+			if err != nil {
+				err = errors.Join(weaver.RemoteCallError, err)
+			}
+		}
+
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
+		}
+		span.End()
+
+	}()
+
+	// Preallocate a buffer of the right size.
+	size := 0
+	size += (4 + len(a0))
+	enc := codegen.NewEncoder()
+	enc.Reset(size)
+
+	// Encode arguments.
+	enc.String(a0)
+	var shardKey uint64
+
+	// Call the remote method.
+	requestBytes = len(enc.Data())
+	var results []byte
+	results, err = s.stub.Run(ctx, 1, enc.Data(), shardKey)
+	replyBytes = len(results)
+	if err != nil {
+		err = errors.Join(weaver.RemoteCallError, err)
+		return
+	}
+
+	// Decode the results.
+	dec := codegen.NewDecoder(results)
+	r0 = dec.String()
+	err = dec.Error()
+	return
+}
+
+func (s portCache_client_stub) Put(ctx context.Context, a0 string, a1 string) (err error) {
+	// Update metrics.
+	var requestBytes, replyBytes int
+	begin := s.putMetrics.Begin()
+	defer func() { s.putMetrics.End(begin, err != nil, requestBytes, replyBytes) }()
+
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.stub.Tracer().Start(ctx, "main.PortCache.Put", trace.WithSpanKind(trace.SpanKindClient))
+	}
+
+	defer func() {
+		// Catch and return any panics detected during encoding/decoding/rpc.
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+			if err != nil {
+				err = errors.Join(weaver.RemoteCallError, err)
+			}
+		}
+
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
+		}
+		span.End()
+
+	}()
+
+	// Preallocate a buffer of the right size.
+	size := 0
+	size += (4 + len(a0))
+	size += (4 + len(a1))
+	enc := codegen.NewEncoder()
+	enc.Reset(size)
+
+	// Encode arguments.
+	enc.String(a0)
+	enc.String(a1)
+	var shardKey uint64
+
+	// Call the remote method.
+	requestBytes = len(enc.Data())
+	var results []byte
+	results, err = s.stub.Run(ctx, 2, enc.Data(), shardKey)
+	replyBytes = len(results)
+	if err != nil {
+		err = errors.Join(weaver.RemoteCallError, err)
+		return
+	}
+
+	// Decode the results.
+	dec := codegen.NewDecoder(results)
+	err = dec.Error()
+	return
+}
+
+type portReverse_client_stub struct {
 	stub           codegen.Stub
 	reverseMetrics *codegen.MethodMetrics
 }
 
-// Check that reverser_client_stub implements the Reverser interface.
-var _ Reverser = (*reverser_client_stub)(nil)
+// Check that portReverse_client_stub implements the PortReverse interface.
+var _ PortReverse = (*portReverse_client_stub)(nil)
 
-func (s reverser_client_stub) Reverse(ctx context.Context, a0 string) (r0 string, err error) {
+func (s portReverse_client_stub) Reverse(ctx context.Context, a0 string) (r0 string, err error) {
 	// Update metrics.
 	var requestBytes, replyBytes int
 	begin := s.reverseMetrics.Begin()
@@ -124,7 +396,7 @@ func (s reverser_client_stub) Reverse(ctx context.Context, a0 string) (r0 string
 	span := trace.SpanFromContext(ctx)
 	if span.SpanContext().IsValid() {
 		// Create a child span for this method.
-		ctx, span = s.stub.Tracer().Start(ctx, "main.Reverser.Reverse", trace.WithSpanKind(trace.SpanKindClient))
+		ctx, span = s.stub.Tracer().Start(ctx, "main.PortReverse.Reverse", trace.WithSpanKind(trace.SpanKindClient))
 	}
 
 	defer func() {
@@ -212,16 +484,115 @@ func (s main_server_stub) GetStubFn(method string) func(ctx context.Context, arg
 	}
 }
 
-type reverser_server_stub struct {
-	impl    Reverser
+type portCache_server_stub struct {
+	impl    PortCache
 	addLoad func(key uint64, load float64)
 }
 
-// Check that reverser_server_stub implements the codegen.Server interface.
-var _ codegen.Server = (*reverser_server_stub)(nil)
+// Check that portCache_server_stub implements the codegen.Server interface.
+var _ codegen.Server = (*portCache_server_stub)(nil)
 
 // GetStubFn implements the codegen.Server interface.
-func (s reverser_server_stub) GetStubFn(method string) func(ctx context.Context, args []byte) ([]byte, error) {
+func (s portCache_server_stub) GetStubFn(method string) func(ctx context.Context, args []byte) ([]byte, error) {
+	switch method {
+	case "Append":
+		return s.append
+	case "Get":
+		return s.get
+	case "Put":
+		return s.put
+	default:
+		return nil
+	}
+}
+
+func (s portCache_server_stub) append(ctx context.Context, args []byte) (res []byte, err error) {
+	// Catch and return any panics detected during encoding/decoding/rpc.
+	defer func() {
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+		}
+	}()
+
+	// Decode arguments.
+	dec := codegen.NewDecoder(args)
+	var a0 string
+	a0 = dec.String()
+	var a1 string
+	a1 = dec.String()
+
+	// TODO(rgrandl): The deferred function above will recover from panics in the
+	// user code: fix this.
+	// Call the local method.
+	appErr := s.impl.Append(ctx, a0, a1)
+
+	// Encode the results.
+	enc := codegen.NewEncoder()
+	enc.Error(appErr)
+	return enc.Data(), nil
+}
+
+func (s portCache_server_stub) get(ctx context.Context, args []byte) (res []byte, err error) {
+	// Catch and return any panics detected during encoding/decoding/rpc.
+	defer func() {
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+		}
+	}()
+
+	// Decode arguments.
+	dec := codegen.NewDecoder(args)
+	var a0 string
+	a0 = dec.String()
+
+	// TODO(rgrandl): The deferred function above will recover from panics in the
+	// user code: fix this.
+	// Call the local method.
+	r0, appErr := s.impl.Get(ctx, a0)
+
+	// Encode the results.
+	enc := codegen.NewEncoder()
+	enc.String(r0)
+	enc.Error(appErr)
+	return enc.Data(), nil
+}
+
+func (s portCache_server_stub) put(ctx context.Context, args []byte) (res []byte, err error) {
+	// Catch and return any panics detected during encoding/decoding/rpc.
+	defer func() {
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+		}
+	}()
+
+	// Decode arguments.
+	dec := codegen.NewDecoder(args)
+	var a0 string
+	a0 = dec.String()
+	var a1 string
+	a1 = dec.String()
+
+	// TODO(rgrandl): The deferred function above will recover from panics in the
+	// user code: fix this.
+	// Call the local method.
+	appErr := s.impl.Put(ctx, a0, a1)
+
+	// Encode the results.
+	enc := codegen.NewEncoder()
+	enc.Error(appErr)
+	return enc.Data(), nil
+}
+
+type portReverse_server_stub struct {
+	impl    PortReverse
+	addLoad func(key uint64, load float64)
+}
+
+// Check that portReverse_server_stub implements the codegen.Server interface.
+var _ codegen.Server = (*portReverse_server_stub)(nil)
+
+// GetStubFn implements the codegen.Server interface.
+func (s portReverse_server_stub) GetStubFn(method string) func(ctx context.Context, args []byte) ([]byte, error) {
 	switch method {
 	case "Reverse":
 		return s.reverse
@@ -230,7 +601,7 @@ func (s reverser_server_stub) GetStubFn(method string) func(ctx context.Context,
 	}
 }
 
-func (s reverser_server_stub) reverse(ctx context.Context, args []byte) (res []byte, err error) {
+func (s portReverse_server_stub) reverse(ctx context.Context, args []byte) (res []byte, err error) {
 	// Catch and return any panics detected during encoding/decoding/rpc.
 	defer func() {
 		if err == nil {
@@ -264,14 +635,36 @@ type main_reflect_stub struct {
 // Check that main_reflect_stub implements the weaver.Main interface.
 var _ weaver.Main = (*main_reflect_stub)(nil)
 
-type reverser_reflect_stub struct {
+type portCache_reflect_stub struct {
 	caller func(string, context.Context, []any, []any) error
 }
 
-// Check that reverser_reflect_stub implements the Reverser interface.
-var _ Reverser = (*reverser_reflect_stub)(nil)
+// Check that portCache_reflect_stub implements the PortCache interface.
+var _ PortCache = (*portCache_reflect_stub)(nil)
 
-func (s reverser_reflect_stub) Reverse(ctx context.Context, a0 string) (r0 string, err error) {
+func (s portCache_reflect_stub) Append(ctx context.Context, a0 string, a1 string) (err error) {
+	err = s.caller("Append", ctx, []any{a0, a1}, []any{})
+	return
+}
+
+func (s portCache_reflect_stub) Get(ctx context.Context, a0 string) (r0 string, err error) {
+	err = s.caller("Get", ctx, []any{a0}, []any{&r0})
+	return
+}
+
+func (s portCache_reflect_stub) Put(ctx context.Context, a0 string, a1 string) (err error) {
+	err = s.caller("Put", ctx, []any{a0, a1}, []any{})
+	return
+}
+
+type portReverse_reflect_stub struct {
+	caller func(string, context.Context, []any, []any) error
+}
+
+// Check that portReverse_reflect_stub implements the PortReverse interface.
+var _ PortReverse = (*portReverse_reflect_stub)(nil)
+
+func (s portReverse_reflect_stub) Reverse(ctx context.Context, a0 string) (r0 string, err error) {
 	err = s.caller("Reverse", ctx, []any{a0}, []any{&r0})
 	return
 }
