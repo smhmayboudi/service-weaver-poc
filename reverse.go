@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/ServiceWeaver/weaver"
+	"github.com/ServiceWeaver/weaver/metadata"
 )
 
 type PortReverseOptions struct {
@@ -22,6 +23,12 @@ type reverse struct {
 }
 
 func (r *reverse) Reverse(ctx context.Context, s string) (string, error) {
+	var defaultGreeting = ""
+	meta, ok := metadata.FromContext(ctx)
+	if ok {
+		defaultGreeting = meta["default_greeting"]
+	}
+
 	logger := r.Logger(ctx).With("foo", "bar")
 	logger.Debug("A debug log.")
 	logger.Info("An info log.")
@@ -32,9 +39,10 @@ func (r *reverse) Reverse(ctx context.Context, s string) (string, error) {
 	for i := 0; i < n/2; i++ {
 		runes[i], runes[n-i-1] = runes[n-i-1], runes[i]
 	}
+
 	greeting := r.Config().Greeting
 	if greeting == "" {
-		greeting = "!!!"
+		greeting = defaultGreeting
 	}
 
 	return greeting + string(runes), nil

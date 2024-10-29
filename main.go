@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/ServiceWeaver/weaver"
+	"github.com/ServiceWeaver/weaver/metadata"
 )
 
 func main() {
@@ -47,6 +48,9 @@ func serve(ctx context.Context, app *app) error {
 			fmt.Fprint(w, "3", "ok")
 			// cache.Get executed properly and did not return an error.
 		}
+
+		ctx := context.Background()
+		ctx = metadata.NewContext(ctx, map[string]string{"default_greeting": "nothing"})
 
 		reversed, err := app.reverse.Get().Reverse(ctx, name+value)
 		if err != nil {
