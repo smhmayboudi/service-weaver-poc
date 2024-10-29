@@ -5,7 +5,7 @@ import (
 
 	"github.com/ServiceWeaver/weaver"
 	"github.com/ServiceWeaver/weaver/metadata"
-	"k8s.io/component-base/metrics"
+	"github.com/ServiceWeaver/weaver/metrics"
 )
 
 type (
@@ -24,9 +24,20 @@ type (
 		weaver.Implements[PortReverse]
 		weaver.WithConfig[PortReverseOptions]
 	}
+
+	labels struct {
+		Parity string // "hello" or else
+	}
 )
 
 var (
+	halveCounts = metrics.NewCounterMap[labels](
+		"reverse_label_count",
+		"The number of values that have been reversed",
+	)
+	helloCount = halveCounts.Get(labels{"hello"})
+	elseCount  = halveCounts.Get(labels{"else"})
+
 	reverseCount = metrics.NewCounter(
 		"reverse_count",
 		"The number of times PortReverse.Reverse has been called",
@@ -46,6 +57,12 @@ func (r *reverse) Reverse(ctx context.Context, s string) (string, error) {
 	reverseCount.Add(1.0)
 	reverseConcurrent.Add(1.0)
 	defer reverseConcurrent.Sub(1.0)
+
+	if s == "hello" {
+		helloCount.Add(1)
+	} else {
+		elseCount.Add(1)
+	}
 
 	var defaultGreeting = ""
 	meta, ok := metadata.FromContext(ctx)
