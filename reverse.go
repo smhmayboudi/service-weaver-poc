@@ -21,7 +21,12 @@ type reverse struct {
 	weaver.WithConfig[PortReverseOptions]
 }
 
-func (r *reverse) Reverse(_ context.Context, s string) (string, error) {
+func (r *reverse) Reverse(ctx context.Context, s string) (string, error) {
+	logger := r.Logger(ctx).With("foo", "bar")
+	logger.Debug("A debug log.")
+	logger.Info("An info log.")
+	logger.Error("An error log.")
+
 	runes := []rune(s)
 	n := len(runes)
 	for i := 0; i < n/2; i++ {
