@@ -5,24 +5,48 @@ import (
 
 	"github.com/ServiceWeaver/weaver"
 	"github.com/ServiceWeaver/weaver/metadata"
+	"k8s.io/component-base/metrics"
 )
 
-type PortReverseOptions struct {
-	Greeting string
-}
+type (
+	// PortReverseOptions component.
+	PortReverseOptions struct {
+		Greeting string
+	}
 
-// PortReverse component.
-type PortReverse interface {
-	Reverse(context.Context, string) (string, error)
-}
+	// PortReverse component.
+	PortReverse interface {
+		Reverse(context.Context, string) (string, error)
+	}
 
-// Implementation of the Reverser component.
-type reverse struct {
-	weaver.Implements[PortReverse]
-	weaver.WithConfig[PortReverseOptions]
-}
+	// Implementation of the PortReverse component.
+	reverse struct {
+		weaver.Implements[PortReverse]
+		weaver.WithConfig[PortReverseOptions]
+	}
+)
+
+var (
+	reverseCount = metrics.NewCounter(
+		"reverse_count",
+		"The number of times PortReverse.Reverse has been called",
+	)
+	reverseConcurrent = metrics.NewGauge(
+		"reverse_concurrent",
+		"The number of concurrent PortReverse.Reverse calls",
+	)
+	reverseSum = metrics.NewHistogram(
+		"reverse_sum",
+		"The sums returned by PortReverse.Reverse",
+		[]float64{1, 10, 100, 1000, 10000},
+	)
+)
 
 func (r *reverse) Reverse(ctx context.Context, s string) (string, error) {
+	reverseCount.Add(1.0)
+	reverseConcurrent.Add(1.0)
+	defer reverseConcurrent.Sub(1.0)
+
 	var defaultGreeting = ""
 	meta, ok := metadata.FromContext(ctx)
 	if ok {
