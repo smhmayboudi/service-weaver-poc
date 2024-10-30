@@ -3,26 +3,36 @@ package main
 import (
 	"context"
 
+	lru "github.com/hashicorp/golang-lru/v2"
+
 	"github.com/ServiceWeaver/weaver"
 	"github.com/ServiceWeaver/weaver/metadata"
 	"github.com/ServiceWeaver/weaver/metrics"
 )
 
-type (
-	// PortReverseOptions component.
-	PortReverseOptions struct {
-		Greeting string
-	}
+// The size of a factorer's LRU cache.
+const cacheSize = 100
 
+type (
 	// PortReverse component.
 	PortReverse interface {
 		Reverse(context.Context, string) (string, error)
 	}
 
+	// reverseOptions component.
+	reverseOptions struct {
+		Greeting string
+	}
+
+	// router component for cache.
+	router struct{}
+
 	// Implementation of the PortReverse component.
 	reverse struct {
+		cache *lru.Cache[string, string]
 		weaver.Implements[PortReverse]
-		weaver.WithConfig[PortReverseOptions]
+		weaver.WithConfig[reverseOptions]
+		weaver.WithRouter[router]
 	}
 
 	labels struct {
@@ -52,6 +62,12 @@ var (
 		[]float64{1, 10, 100, 1000, 10000},
 	)
 )
+
+func (r *reverse) Init(_ context.Context) error {
+	cache, err := lru.New[string, string](cacheSize)
+	r.cache = cache
+	return err
+}
 
 func (r *reverse) Reverse(ctx context.Context, s string) (string, error) {
 	reverseCount.Add(1.0)
@@ -86,5 +102,13 @@ func (r *reverse) Reverse(ctx context.Context, s string) (string, error) {
 		greeting = defaultGreeting
 	}
 
-	return greeting + string(runes), nil
+	out := greeting + string(runes)
+
+	r.cache.Add(s, out)
+
+	return out, nil
+}
+
+func (r *router) Reverse(ctx context.Context, s string) string {
+	return s
 }

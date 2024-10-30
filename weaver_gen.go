@@ -51,9 +51,10 @@ func init() {
 		RefData: "",
 	})
 	codegen.Register(codegen.Registration{
-		Name:  "github.com/smhmayboudi/service-weaver-poc/PortReverse",
-		Iface: reflect.TypeOf((*PortReverse)(nil)).Elem(),
-		Impl:  reflect.TypeOf(reverse{}),
+		Name:   "github.com/smhmayboudi/service-weaver-poc/PortReverse",
+		Iface:  reflect.TypeOf((*PortReverse)(nil)).Elem(),
+		Impl:   reflect.TypeOf(reverse{}),
+		Routed: true,
 		LocalStubFn: func(impl any, caller string, tracer trace.Tracer) any {
 			return portReverse_local_stub{impl: impl.(PortReverse), tracer: tracer, reverseMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortReverse", Method: "Reverse", Remote: false, Generated: true})}
 		},
@@ -78,7 +79,10 @@ var _ weaver.InstanceOf[PortReverse] = (*reverse)(nil)
 // weaver.Router checks.
 var _ weaver.Unrouted = (*app)(nil)
 var _ weaver.Unrouted = (*cache)(nil)
-var _ weaver.Unrouted = (*reverse)(nil)
+var _ weaver.RoutedBy[router] = (*reverse)(nil)
+
+// Component "reverse", router "router" checks.
+var _ func(ctx context.Context, s string) string = (&router{}).Reverse // routed
 
 // Local stub implementations.
 
@@ -424,7 +428,10 @@ func (s portReverse_client_stub) Reverse(ctx context.Context, a0 string) (r0 str
 
 	// Encode arguments.
 	enc.String(a0)
-	var shardKey uint64
+
+	// Set the shardKey.
+	var r router
+	shardKey := _hashPortReverse(r.Reverse(ctx, a0))
 
 	// Call the remote method.
 	requestBytes = len(enc.Data())
@@ -613,6 +620,8 @@ func (s portReverse_server_stub) reverse(ctx context.Context, args []byte) (res 
 	dec := codegen.NewDecoder(args)
 	var a0 string
 	a0 = dec.String()
+	var r router
+	s.addLoad(_hashPortReverse(r.Reverse(ctx, a0)), 1.0)
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
@@ -667,4 +676,20 @@ var _ PortReverse = (*portReverse_reflect_stub)(nil)
 func (s portReverse_reflect_stub) Reverse(ctx context.Context, a0 string) (r0 string, err error) {
 	err = s.caller("Reverse", ctx, []any{a0}, []any{&r0})
 	return
+}
+
+// Router methods.
+
+// _hashPortReverse returns a 64 bit hash of the provided value.
+func _hashPortReverse(r string) uint64 {
+	var h codegen.Hasher
+	h.WriteString(string(r))
+	return h.Sum64()
+}
+
+// _orderedCodePortReverse returns an order-preserving serialization of the provided value.
+func _orderedCodePortReverse(r string) codegen.OrderedCode {
+	var enc codegen.OrderedEncoder
+	enc.WriteString(string(r))
+	return enc.Encode()
 }
