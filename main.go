@@ -30,7 +30,7 @@ func serve(ctx context.Context, app *app) error {
 	fmt.Printf("hello listener available on %v\n", app.hello)
 
 	// Serve the /hello endpoint.
-	http.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
+	http.Handle("/hello", weaver.InstrumentHandlerFunc("hello", func(w http.ResponseWriter, r *http.Request) {
 		name := r.URL.Query().Get("name")
 		if name == "" {
 			name = "World"
@@ -58,7 +58,7 @@ func serve(ctx context.Context, app *app) error {
 			return
 		}
 		fmt.Fprintf(w, "Hello, %s!\n", reversed)
-	})
+	}))
 
 	return http.Serve(app.hello, nil)
 }
