@@ -17,7 +17,7 @@ func init() {
 	codegen.Register(codegen.Registration{
 		Name:      "github.com/ServiceWeaver/weaver/Main",
 		Iface:     reflect.TypeOf((*weaver.Main)(nil)).Elem(),
-		Impl:      reflect.TypeOf(app{}),
+		Impl:      reflect.TypeOf(server{}),
 		Listeners: []string{"hello"},
 		LocalStubFn: func(impl any, caller string, tracer trace.Tracer) any {
 			return main_local_stub{impl: impl.(weaver.Main), tracer: tracer}
@@ -90,13 +90,13 @@ func init() {
 }
 
 // weaver.InstanceOf checks.
-var _ weaver.InstanceOf[weaver.Main] = (*app)(nil)
+var _ weaver.InstanceOf[weaver.Main] = (*server)(nil)
 var _ weaver.InstanceOf[PortAdd] = (*add)(nil)
 var _ weaver.InstanceOf[PortCache] = (*cache)(nil)
 var _ weaver.InstanceOf[PortReverse] = (*reverse)(nil)
 
 // weaver.Router checks.
-var _ weaver.Unrouted = (*app)(nil)
+var _ weaver.Unrouted = (*server)(nil)
 var _ weaver.Unrouted = (*add)(nil)
 var _ weaver.Unrouted = (*cache)(nil)
 var _ weaver.RoutedBy[router] = (*reverse)(nil)
