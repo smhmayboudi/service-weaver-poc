@@ -32,6 +32,24 @@ func init() {
 		RefData: "⟦039ffdc8:wEaVeReDgE:github.com/ServiceWeaver/weaver/Main→github.com/smhmayboudi/service-weaver-poc/PortReverse⟧\n⟦27a66094:wEaVeReDgE:github.com/ServiceWeaver/weaver/Main→github.com/smhmayboudi/service-weaver-poc/PortCache⟧\n⟦17f36ff9:wEaVeRlIsTeNeRs:github.com/ServiceWeaver/weaver/Main→hello⟧\n",
 	})
 	codegen.Register(codegen.Registration{
+		Name:  "github.com/smhmayboudi/service-weaver-poc/PortAdd",
+		Iface: reflect.TypeOf((*PortAdd)(nil)).Elem(),
+		Impl:  reflect.TypeOf(add{}),
+		LocalStubFn: func(impl any, caller string, tracer trace.Tracer) any {
+			return portAdd_local_stub{impl: impl.(PortAdd), tracer: tracer, addMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortAdd", Method: "Add", Remote: false, Generated: true})}
+		},
+		ClientStubFn: func(stub codegen.Stub, caller string) any {
+			return portAdd_client_stub{stub: stub, addMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortAdd", Method: "Add", Remote: true, Generated: true})}
+		},
+		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
+			return portAdd_server_stub{impl: impl.(PortAdd), addLoad: addLoad}
+		},
+		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
+			return portAdd_reflect_stub{caller: caller}
+		},
+		RefData: "",
+	})
+	codegen.Register(codegen.Registration{
 		Name:    "github.com/smhmayboudi/service-weaver-poc/PortCache",
 		Iface:   reflect.TypeOf((*PortCache)(nil)).Elem(),
 		Impl:    reflect.TypeOf(cache{}),
@@ -67,17 +85,19 @@ func init() {
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return portReverse_reflect_stub{caller: caller}
 		},
-		RefData: "",
+		RefData: "⟦273493ea:wEaVeReDgE:github.com/smhmayboudi/service-weaver-poc/PortReverse→github.com/smhmayboudi/service-weaver-poc/PortAdd⟧\n",
 	})
 }
 
 // weaver.InstanceOf checks.
 var _ weaver.InstanceOf[weaver.Main] = (*app)(nil)
+var _ weaver.InstanceOf[PortAdd] = (*add)(nil)
 var _ weaver.InstanceOf[PortCache] = (*cache)(nil)
 var _ weaver.InstanceOf[PortReverse] = (*reverse)(nil)
 
 // weaver.Router checks.
 var _ weaver.Unrouted = (*app)(nil)
+var _ weaver.Unrouted = (*add)(nil)
 var _ weaver.Unrouted = (*cache)(nil)
 var _ weaver.RoutedBy[router] = (*reverse)(nil)
 
@@ -93,6 +113,35 @@ type main_local_stub struct {
 
 // Check that main_local_stub implements the weaver.Main interface.
 var _ weaver.Main = (*main_local_stub)(nil)
+
+type portAdd_local_stub struct {
+	impl       PortAdd
+	tracer     trace.Tracer
+	addMetrics *codegen.MethodMetrics
+}
+
+// Check that portAdd_local_stub implements the PortAdd interface.
+var _ PortAdd = (*portAdd_local_stub)(nil)
+
+func (s portAdd_local_stub) Add(ctx context.Context, a0 int, a1 int) (r0 int, err error) {
+	// Update metrics.
+	begin := s.addMetrics.Begin()
+	defer func() { s.addMetrics.End(begin, err != nil, 0, 0) }()
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.tracer.Start(ctx, "main.PortAdd.Add", trace.WithSpanKind(trace.SpanKindInternal))
+		defer func() {
+			if err != nil {
+				span.RecordError(err)
+				span.SetStatus(codes.Error, err.Error())
+			}
+			span.End()
+		}()
+	}
+
+	return s.impl.Add(ctx, a0, a1)
+}
 
 type portCache_local_stub struct {
 	impl          PortCache
@@ -202,6 +251,72 @@ type main_client_stub struct {
 
 // Check that main_client_stub implements the weaver.Main interface.
 var _ weaver.Main = (*main_client_stub)(nil)
+
+type portAdd_client_stub struct {
+	stub       codegen.Stub
+	addMetrics *codegen.MethodMetrics
+}
+
+// Check that portAdd_client_stub implements the PortAdd interface.
+var _ PortAdd = (*portAdd_client_stub)(nil)
+
+func (s portAdd_client_stub) Add(ctx context.Context, a0 int, a1 int) (r0 int, err error) {
+	// Update metrics.
+	var requestBytes, replyBytes int
+	begin := s.addMetrics.Begin()
+	defer func() { s.addMetrics.End(begin, err != nil, requestBytes, replyBytes) }()
+
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.stub.Tracer().Start(ctx, "main.PortAdd.Add", trace.WithSpanKind(trace.SpanKindClient))
+	}
+
+	defer func() {
+		// Catch and return any panics detected during encoding/decoding/rpc.
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+			if err != nil {
+				err = errors.Join(weaver.RemoteCallError, err)
+			}
+		}
+
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
+		}
+		span.End()
+
+	}()
+
+	// Preallocate a buffer of the right size.
+	size := 0
+	size += 8
+	size += 8
+	enc := codegen.NewEncoder()
+	enc.Reset(size)
+
+	// Encode arguments.
+	enc.Int(a0)
+	enc.Int(a1)
+	var shardKey uint64
+
+	// Call the remote method.
+	requestBytes = len(enc.Data())
+	var results []byte
+	results, err = s.stub.Run(ctx, 0, enc.Data(), shardKey)
+	replyBytes = len(results)
+	if err != nil {
+		err = errors.Join(weaver.RemoteCallError, err)
+		return
+	}
+
+	// Decode the results.
+	dec := codegen.NewDecoder(results)
+	r0 = dec.Int()
+	err = dec.Error()
+	return
+}
 
 type portCache_client_stub struct {
 	stub          codegen.Stub
@@ -491,6 +606,51 @@ func (s main_server_stub) GetStubFn(method string) func(ctx context.Context, arg
 	}
 }
 
+type portAdd_server_stub struct {
+	impl    PortAdd
+	addLoad func(key uint64, load float64)
+}
+
+// Check that portAdd_server_stub implements the codegen.Server interface.
+var _ codegen.Server = (*portAdd_server_stub)(nil)
+
+// GetStubFn implements the codegen.Server interface.
+func (s portAdd_server_stub) GetStubFn(method string) func(ctx context.Context, args []byte) ([]byte, error) {
+	switch method {
+	case "Add":
+		return s.add
+	default:
+		return nil
+	}
+}
+
+func (s portAdd_server_stub) add(ctx context.Context, args []byte) (res []byte, err error) {
+	// Catch and return any panics detected during encoding/decoding/rpc.
+	defer func() {
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+		}
+	}()
+
+	// Decode arguments.
+	dec := codegen.NewDecoder(args)
+	var a0 int
+	a0 = dec.Int()
+	var a1 int
+	a1 = dec.Int()
+
+	// TODO(rgrandl): The deferred function above will recover from panics in the
+	// user code: fix this.
+	// Call the local method.
+	r0, appErr := s.impl.Add(ctx, a0, a1)
+
+	// Encode the results.
+	enc := codegen.NewEncoder()
+	enc.Int(r0)
+	enc.Error(appErr)
+	return enc.Data(), nil
+}
+
 type portCache_server_stub struct {
 	impl    PortCache
 	addLoad func(key uint64, load float64)
@@ -643,6 +803,18 @@ type main_reflect_stub struct {
 
 // Check that main_reflect_stub implements the weaver.Main interface.
 var _ weaver.Main = (*main_reflect_stub)(nil)
+
+type portAdd_reflect_stub struct {
+	caller func(string, context.Context, []any, []any) error
+}
+
+// Check that portAdd_reflect_stub implements the PortAdd interface.
+var _ PortAdd = (*portAdd_reflect_stub)(nil)
+
+func (s portAdd_reflect_stub) Add(ctx context.Context, a0 int, a1 int) (r0 int, err error) {
+	err = s.caller("Add", ctx, []any{a0, a1}, []any{&r0})
+	return
+}
 
 type portCache_reflect_stub struct {
 	caller func(string, context.Context, []any, []any) error

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"strconv"
 
 	lru "github.com/hashicorp/golang-lru/v2"
 
@@ -29,6 +30,7 @@ type (
 
 	// Implementation of the PortReverse component.
 	reverse struct {
+		add   weaver.Ref[PortAdd]
 		cache *lru.Cache[string, string]
 		weaver.Implements[PortReverse]
 		weaver.WithConfig[reverseOptions]
@@ -102,7 +104,9 @@ func (r *reverse) Reverse(ctx context.Context, s string) (string, error) {
 		greeting = defaultGreeting
 	}
 
-	out := greeting + string(runes)
+	res, _ := r.add.Get().Add(ctx, 1, 2)
+
+	out := strconv.Itoa(res) + greeting + string(runes)
 
 	r.cache.Add(s, out)
 
