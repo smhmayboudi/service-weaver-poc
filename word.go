@@ -31,11 +31,11 @@ var (
 	notHelloCount = wordCount.Get(wordLabel{"notHello"})
 )
 
-func (w *word) Parse(ctx context.Context, val string) error {
-	logger := w.Logger(ctx).With("code.function", "Parse")
+func (w *word) Parse(ctx context.Context, value string) error {
+	logger := w.Logger(ctx).With("code.function", "Parse").With("value", value)
 	logger.Info("")
 
-	if val == "hello" {
+	if value == "hello" {
 		logger.Debug("inside if")
 		helloCount.Add(1)
 	} else {

@@ -41,24 +41,26 @@ func (s *server) handleFactors(w http.ResponseWriter, r *http.Request) {
 	value, err := s.cache.Get().Get(r.Context(), name)
 	if errors.Is(err, weaver.RemoteCallError) {
 		// cache.Get did not execute properly.
-		logger.Error("1 Error %v", err)
+		logger.Error("1 Error", "err", err)
 	} else if err != nil {
 		// cache.Get executed properly, but returned an error.
-		logger.Error("2 Error %v", err)
+		logger.Error("2 Error", "err", err)
 	} else {
 		// cache.Get executed properly and did not return an error.
-		logger.Debug("3 OK %v", value)
+		logger.Debug("3 OK", "value", value)
 		if value == "" {
 			logger.Debug("inside if")
 			ctx := metadata.NewContext(r.Context(), map[string]string{"default_greeting": "nothing"})
 			reversed, err := s.reverse.Get().Reverse(ctx, name+value)
 			if err != nil {
-				logger.Error("Error %v", err)
+				logger.Error("", "err", err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
 			value = reversed
+			s.cache.Get().Put(r.Context(), name, value)
 		}
+		logger.Debug("", "value", value)
 		fmt.Fprintf(w, "Hello, %s!\n", value)
 	}
 }

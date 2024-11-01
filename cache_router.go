@@ -8,11 +8,11 @@ import (
 type cacheRouter struct{}
 
 func (cacheRouter) Get(_ context.Context, key string) string {
-	fmt.Printf("cacheRouter => Get")
+	fmt.Println("cacheRouter => Get")
 	return key
 }
 
 func (cacheRouter) Put(_ context.Context, key, value string) string {
-	fmt.Printf("cacheRouter => Put")
+	fmt.Println("cacheRouter => Put")
 	return key
 }

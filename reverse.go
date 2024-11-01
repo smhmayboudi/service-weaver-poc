@@ -47,7 +47,7 @@ var (
 )
 
 func (r *reverse) Reverse(ctx context.Context, str string) (string, error) {
-	logger := r.Logger(ctx).With("code.function", "Reverse")
+	logger := r.Logger(ctx).With("code.function", "Reverse").With("str", str)
 	logger.Info("")
 
 	reverseCount.Add(1.0)
@@ -57,20 +57,20 @@ func (r *reverse) Reverse(ctx context.Context, str string) (string, error) {
 	r.word.Get().Parse(ctx, str)
 
 	var defaultGreeting = ""
-	logger.Debug("defaultGreeting: %v", defaultGreeting)
+	logger.Debug("", "defaultGreeting", defaultGreeting)
 	meta, ok := metadata.FromContext(ctx)
 	if ok {
-		logger.Debug("meta: ", meta)
+		logger.Debug("", "meta", meta)
 		defaultGreeting = meta["default_greeting"]
-		logger.Debug("defaultGreeting: %v", defaultGreeting)
+		logger.Debug("", "defaultGreeting", defaultGreeting)
 	}
 
 	greeting := r.Config().Greeting
-	logger.Debug("greeting: %v", greeting)
+	logger.Debug("", "greeting", greeting)
 	if greeting == "" {
 		logger.Debug("inside if")
 		greeting = defaultGreeting
-		logger.Debug("greeting: %v", greeting)
+		logger.Debug("", "greeting", greeting)
 	}
 
 	runes := []rune(str)
@@ -80,7 +80,7 @@ func (r *reverse) Reverse(ctx context.Context, str string) (string, error) {
 	}
 	res, _ := r.add.Get().Add(ctx, 1, 2)
 	val := strconv.Itoa(res) + greeting + string(runes)
-	logger.Debug("val: %v", val)
+	logger.Debug("", "val", val)
 	reverseSum.Put(1)
 
 	return val, nil

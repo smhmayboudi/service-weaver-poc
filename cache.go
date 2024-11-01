@@ -42,7 +42,7 @@ func (c *cache) Init(ctx context.Context) error {
 }
 
 func (c *cache) Get(ctx context.Context, key string) (string, error) {
-	logger := c.Logger(ctx).With("code.function", "Get")
+	logger := c.Logger(ctx).With("code.function", "Get").With("key", key)
 	logger.Info("")
 
 	c.mu.Lock()
@@ -51,7 +51,7 @@ func (c *cache) Get(ctx context.Context, key string) (string, error) {
 }
 
 func (c *cache) Put(ctx context.Context, key, value string) error {
-	logger := c.Logger(ctx).With("code.function", "Put")
+	logger := c.Logger(ctx).With("code.function", "Put").With("key", key).With("value", value)
 	logger.Info("")
 
 	c.mu.Lock()

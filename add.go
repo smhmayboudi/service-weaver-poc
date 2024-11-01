@@ -34,7 +34,7 @@ var (
 )
 
 func (a *add) Add(ctx context.Context, x, y int) (int, error) {
-	logger := a.Logger(ctx).With("code.function", "Add")
+	logger := a.Logger(ctx).With("code.function", "Add").With("x", x).With("y", y)
 	logger.Info("")
 
 	addCount.Add(1.0)
@@ -42,7 +42,7 @@ func (a *add) Add(ctx context.Context, x, y int) (int, error) {
 	defer addConcurrent.Sub(1.0)
 
 	out := x + y
-	logger.Debug("out: %v", out)
+	logger.Debug("", "out", out)
 	addSum.Put(float64(out))
 
 	return out, nil
