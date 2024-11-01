@@ -7,6 +7,16 @@ import (
 	"github.com/ServiceWeaver/weaver/metrics"
 )
 
+type (
+	PortAdd interface {
+		Add(context.Context, int, int) (int, error)
+	}
+
+	add struct {
+		weaver.Implements[PortAdd]
+	}
+)
+
 var (
 	addCount = metrics.NewCounter(
 		"add_count",
@@ -23,18 +33,17 @@ var (
 	)
 )
 
-type PortAdd interface {
-	Add(context.Context, int, int) (int, error)
-}
+func (a *add) Add(ctx context.Context, x, y int) (int, error) {
+	logger := a.Logger(ctx).With("code.function", "Add")
+	logger.Info("")
 
-type add struct {
-	weaver.Implements[PortAdd]
-}
-
-func (*add) Add(_ context.Context, x, y int) (int, error) {
 	addCount.Add(1.0)
 	addConcurrent.Add(1.0)
 	defer addConcurrent.Sub(1.0)
-	addSum.Put(float64(x + y))
-	return x + y, nil
+
+	out := x + y
+	logger.Debug("out: %v", out)
+	addSum.Put(float64(out))
+
+	return out, nil
 }

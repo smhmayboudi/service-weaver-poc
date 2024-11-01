@@ -4,7 +4,6 @@ go 1.23.2
 
 require (
 	github.com/ServiceWeaver/weaver v0.24.6
-	github.com/hashicorp/golang-lru/v2 v2.0.1
 	go.opentelemetry.io/otel v1.19.0
 	go.opentelemetry.io/otel/trace v1.19.0
 )

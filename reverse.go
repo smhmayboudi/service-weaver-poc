@@ -4,52 +4,33 @@ import (
 	"context"
 	"strconv"
 
-	lru "github.com/hashicorp/golang-lru/v2"
-
 	"github.com/ServiceWeaver/weaver"
 	"github.com/ServiceWeaver/weaver/metadata"
 	"github.com/ServiceWeaver/weaver/metrics"
 )
 
-// The size of a factorer's LRU cache.
-const cacheSize = 100
-
 type (
-	// PortReverse component.
 	PortReverse interface {
 		Reverse(context.Context, string) (string, error)
 	}
 
-	// reverseOptions component.
-	reverseOptions struct {
+	reverse struct {
+		add weaver.Ref[PortAdd]
+		weaver.Implements[PortReverse]
+		weaver.WithConfig[reverseOption]
+		word weaver.Ref[PortWord]
+	}
+
+	reverseOption struct {
 		Greeting string
 	}
 
-	// router component for cache.
-	router struct{}
-
-	// Implementation of the PortReverse component.
-	reverse struct {
-		add   weaver.Ref[PortAdd]
-		cache *lru.Cache[string, string]
-		weaver.Implements[PortReverse]
-		weaver.WithConfig[reverseOptions]
-		weaver.WithRouter[router]
-	}
-
-	labels struct {
-		Parity string // "hello" or else
+	reverseLabel struct {
+		HelloParity string
 	}
 )
 
 var (
-	halveCounts = metrics.NewCounterMap[labels](
-		"reverse_label_count",
-		"The number of values that have been reversed",
-	)
-	helloCount = halveCounts.Get(labels{"hello"})
-	elseCount  = halveCounts.Get(labels{"else"})
-
 	reverseCount = metrics.NewCounter(
 		"reverse_count",
 		"The number of times PortReverse.Reverse has been called",
@@ -65,54 +46,42 @@ var (
 	)
 )
 
-func (r *reverse) Init(_ context.Context) error {
-	cache, err := lru.New[string, string](cacheSize)
-	r.cache = cache
-	return err
-}
+func (r *reverse) Reverse(ctx context.Context, str string) (string, error) {
+	logger := r.Logger(ctx).With("code.function", "Reverse")
+	logger.Info("")
 
-func (r *reverse) Reverse(ctx context.Context, s string) (string, error) {
 	reverseCount.Add(1.0)
 	reverseConcurrent.Add(1.0)
 	defer reverseConcurrent.Sub(1.0)
 
-	if s == "hello" {
-		helloCount.Add(1)
-	} else {
-		elseCount.Add(1)
-	}
+	r.word.Get().Parse(ctx, str)
 
 	var defaultGreeting = ""
+	logger.Debug("defaultGreeting: %v", defaultGreeting)
 	meta, ok := metadata.FromContext(ctx)
 	if ok {
+		logger.Debug("meta: ", meta)
 		defaultGreeting = meta["default_greeting"]
+		logger.Debug("defaultGreeting: %v", defaultGreeting)
 	}
 
-	logger := r.Logger(ctx).With("foo", "bar")
-	logger.Debug("A debug log.")
-	logger.Info("An info log.")
-	logger.Error("An error log.")
+	greeting := r.Config().Greeting
+	logger.Debug("greeting: %v", greeting)
+	if greeting == "" {
+		logger.Debug("inside if")
+		greeting = defaultGreeting
+		logger.Debug("greeting: %v", greeting)
+	}
 
-	runes := []rune(s)
+	runes := []rune(str)
 	n := len(runes)
 	for i := 0; i < n/2; i++ {
 		runes[i], runes[n-i-1] = runes[n-i-1], runes[i]
 	}
-
-	greeting := r.Config().Greeting
-	if greeting == "" {
-		greeting = defaultGreeting
-	}
-
 	res, _ := r.add.Get().Add(ctx, 1, 2)
+	val := strconv.Itoa(res) + greeting + string(runes)
+	logger.Debug("val: %v", val)
+	reverseSum.Put(1)
 
-	out := strconv.Itoa(res) + greeting + string(runes)
-
-	r.cache.Add(s, out)
-
-	return out, nil
-}
-
-func (r *router) Reverse(ctx context.Context, s string) string {
-	return s
+	return val, nil
 }

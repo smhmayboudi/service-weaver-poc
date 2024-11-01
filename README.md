@@ -50,3 +50,8 @@ for multi process:
 weaver multi status
 weaver multi dashboard
 ```
+
+```SHELL
+weaver multi deploy weaver.toml
+weaver single deploy weaver.toml
+```

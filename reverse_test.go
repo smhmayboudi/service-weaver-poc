@@ -10,11 +10,11 @@ import (
 
 type fakeAdd struct{}
 
+var _ PortAdd = (*fakeAdd)(nil)
+
 func (add *fakeAdd) Add(_ context.Context, a, b int) (int, error) {
 	return 0, nil
 }
-
-var _ PortAdd = (*fakeAdd)(nil)
 
 func TestReverse(t *testing.T) {
 	for _, runner := range weavertest.AllRunners() {

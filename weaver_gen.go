@@ -50,15 +50,15 @@ func init() {
 		RefData: "",
 	})
 	codegen.Register(codegen.Registration{
-		Name:    "github.com/smhmayboudi/service-weaver-poc/PortCache",
-		Iface:   reflect.TypeOf((*PortCache)(nil)).Elem(),
-		Impl:    reflect.TypeOf(cache{}),
-		NoRetry: []int{0},
+		Name:   "github.com/smhmayboudi/service-weaver-poc/PortCache",
+		Iface:  reflect.TypeOf((*PortCache)(nil)).Elem(),
+		Impl:   reflect.TypeOf(cache{}),
+		Routed: true,
 		LocalStubFn: func(impl any, caller string, tracer trace.Tracer) any {
-			return portCache_local_stub{impl: impl.(PortCache), tracer: tracer, appendMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Append", Remote: false, Generated: true}), getMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Get", Remote: false, Generated: true}), putMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Put", Remote: false, Generated: true})}
+			return portCache_local_stub{impl: impl.(PortCache), tracer: tracer, getMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Get", Remote: false, Generated: true}), putMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Put", Remote: false, Generated: true})}
 		},
 		ClientStubFn: func(stub codegen.Stub, caller string) any {
-			return portCache_client_stub{stub: stub, appendMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Append", Remote: true, Generated: true}), getMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Get", Remote: true, Generated: true}), putMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Put", Remote: true, Generated: true})}
+			return portCache_client_stub{stub: stub, getMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Get", Remote: true, Generated: true}), putMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortCache", Method: "Put", Remote: true, Generated: true})}
 		},
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
 			return portCache_server_stub{impl: impl.(PortCache), addLoad: addLoad}
@@ -69,10 +69,9 @@ func init() {
 		RefData: "",
 	})
 	codegen.Register(codegen.Registration{
-		Name:   "github.com/smhmayboudi/service-weaver-poc/PortReverse",
-		Iface:  reflect.TypeOf((*PortReverse)(nil)).Elem(),
-		Impl:   reflect.TypeOf(reverse{}),
-		Routed: true,
+		Name:  "github.com/smhmayboudi/service-weaver-poc/PortReverse",
+		Iface: reflect.TypeOf((*PortReverse)(nil)).Elem(),
+		Impl:  reflect.TypeOf(reverse{}),
 		LocalStubFn: func(impl any, caller string, tracer trace.Tracer) any {
 			return portReverse_local_stub{impl: impl.(PortReverse), tracer: tracer, reverseMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortReverse", Method: "Reverse", Remote: false, Generated: true})}
 		},
@@ -85,7 +84,25 @@ func init() {
 		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
 			return portReverse_reflect_stub{caller: caller}
 		},
-		RefData: "⟦273493ea:wEaVeReDgE:github.com/smhmayboudi/service-weaver-poc/PortReverse→github.com/smhmayboudi/service-weaver-poc/PortAdd⟧\n",
+		RefData: "⟦273493ea:wEaVeReDgE:github.com/smhmayboudi/service-weaver-poc/PortReverse→github.com/smhmayboudi/service-weaver-poc/PortAdd⟧\n⟦a00ec531:wEaVeReDgE:github.com/smhmayboudi/service-weaver-poc/PortReverse→github.com/smhmayboudi/service-weaver-poc/PortWord⟧\n",
+	})
+	codegen.Register(codegen.Registration{
+		Name:  "github.com/smhmayboudi/service-weaver-poc/PortWord",
+		Iface: reflect.TypeOf((*PortWord)(nil)).Elem(),
+		Impl:  reflect.TypeOf(word{}),
+		LocalStubFn: func(impl any, caller string, tracer trace.Tracer) any {
+			return portWord_local_stub{impl: impl.(PortWord), tracer: tracer, parseMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortWord", Method: "Parse", Remote: false, Generated: true})}
+		},
+		ClientStubFn: func(stub codegen.Stub, caller string) any {
+			return portWord_client_stub{stub: stub, parseMetrics: codegen.MethodMetricsFor(codegen.MethodLabels{Caller: caller, Component: "github.com/smhmayboudi/service-weaver-poc/PortWord", Method: "Parse", Remote: true, Generated: true})}
+		},
+		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
+			return portWord_server_stub{impl: impl.(PortWord), addLoad: addLoad}
+		},
+		ReflectStubFn: func(caller func(string, context.Context, []any, []any) error) any {
+			return portWord_reflect_stub{caller: caller}
+		},
+		RefData: "",
 	})
 }
 
@@ -94,15 +111,18 @@ var _ weaver.InstanceOf[weaver.Main] = (*server)(nil)
 var _ weaver.InstanceOf[PortAdd] = (*add)(nil)
 var _ weaver.InstanceOf[PortCache] = (*cache)(nil)
 var _ weaver.InstanceOf[PortReverse] = (*reverse)(nil)
+var _ weaver.InstanceOf[PortWord] = (*word)(nil)
 
 // weaver.Router checks.
 var _ weaver.Unrouted = (*server)(nil)
 var _ weaver.Unrouted = (*add)(nil)
-var _ weaver.Unrouted = (*cache)(nil)
-var _ weaver.RoutedBy[router] = (*reverse)(nil)
+var _ weaver.RoutedBy[cacheRouter] = (*cache)(nil)
+var _ weaver.Unrouted = (*reverse)(nil)
+var _ weaver.Unrouted = (*word)(nil)
 
-// Component "reverse", router "router" checks.
-var _ func(ctx context.Context, s string) string = (&router{}).Reverse // routed
+// Component "cache", router "cacheRouter" checks.
+var _ func(_ context.Context, key string) string = (&cacheRouter{}).Get               // routed
+var _ func(_ context.Context, key string, value string) string = (&cacheRouter{}).Put // routed
 
 // Local stub implementations.
 
@@ -144,35 +164,14 @@ func (s portAdd_local_stub) Add(ctx context.Context, a0 int, a1 int) (r0 int, er
 }
 
 type portCache_local_stub struct {
-	impl          PortCache
-	tracer        trace.Tracer
-	appendMetrics *codegen.MethodMetrics
-	getMetrics    *codegen.MethodMetrics
-	putMetrics    *codegen.MethodMetrics
+	impl       PortCache
+	tracer     trace.Tracer
+	getMetrics *codegen.MethodMetrics
+	putMetrics *codegen.MethodMetrics
 }
 
 // Check that portCache_local_stub implements the PortCache interface.
 var _ PortCache = (*portCache_local_stub)(nil)
-
-func (s portCache_local_stub) Append(ctx context.Context, a0 string, a1 string) (err error) {
-	// Update metrics.
-	begin := s.appendMetrics.Begin()
-	defer func() { s.appendMetrics.End(begin, err != nil, 0, 0) }()
-	span := trace.SpanFromContext(ctx)
-	if span.SpanContext().IsValid() {
-		// Create a child span for this method.
-		ctx, span = s.tracer.Start(ctx, "main.PortCache.Append", trace.WithSpanKind(trace.SpanKindInternal))
-		defer func() {
-			if err != nil {
-				span.RecordError(err)
-				span.SetStatus(codes.Error, err.Error())
-			}
-			span.End()
-		}()
-	}
-
-	return s.impl.Append(ctx, a0, a1)
-}
 
 func (s portCache_local_stub) Get(ctx context.Context, a0 string) (r0 string, err error) {
 	// Update metrics.
@@ -241,6 +240,35 @@ func (s portReverse_local_stub) Reverse(ctx context.Context, a0 string) (r0 stri
 	}
 
 	return s.impl.Reverse(ctx, a0)
+}
+
+type portWord_local_stub struct {
+	impl         PortWord
+	tracer       trace.Tracer
+	parseMetrics *codegen.MethodMetrics
+}
+
+// Check that portWord_local_stub implements the PortWord interface.
+var _ PortWord = (*portWord_local_stub)(nil)
+
+func (s portWord_local_stub) Parse(ctx context.Context, a0 string) (err error) {
+	// Update metrics.
+	begin := s.parseMetrics.Begin()
+	defer func() { s.parseMetrics.End(begin, err != nil, 0, 0) }()
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.tracer.Start(ctx, "main.PortWord.Parse", trace.WithSpanKind(trace.SpanKindInternal))
+		defer func() {
+			if err != nil {
+				span.RecordError(err)
+				span.SetStatus(codes.Error, err.Error())
+			}
+			span.End()
+		}()
+	}
+
+	return s.impl.Parse(ctx, a0)
 }
 
 // Client stub implementations.
@@ -319,71 +347,13 @@ func (s portAdd_client_stub) Add(ctx context.Context, a0 int, a1 int) (r0 int, e
 }
 
 type portCache_client_stub struct {
-	stub          codegen.Stub
-	appendMetrics *codegen.MethodMetrics
-	getMetrics    *codegen.MethodMetrics
-	putMetrics    *codegen.MethodMetrics
+	stub       codegen.Stub
+	getMetrics *codegen.MethodMetrics
+	putMetrics *codegen.MethodMetrics
 }
 
 // Check that portCache_client_stub implements the PortCache interface.
 var _ PortCache = (*portCache_client_stub)(nil)
-
-func (s portCache_client_stub) Append(ctx context.Context, a0 string, a1 string) (err error) {
-	// Update metrics.
-	var requestBytes, replyBytes int
-	begin := s.appendMetrics.Begin()
-	defer func() { s.appendMetrics.End(begin, err != nil, requestBytes, replyBytes) }()
-
-	span := trace.SpanFromContext(ctx)
-	if span.SpanContext().IsValid() {
-		// Create a child span for this method.
-		ctx, span = s.stub.Tracer().Start(ctx, "main.PortCache.Append", trace.WithSpanKind(trace.SpanKindClient))
-	}
-
-	defer func() {
-		// Catch and return any panics detected during encoding/decoding/rpc.
-		if err == nil {
-			err = codegen.CatchPanics(recover())
-			if err != nil {
-				err = errors.Join(weaver.RemoteCallError, err)
-			}
-		}
-
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, err.Error())
-		}
-		span.End()
-
-	}()
-
-	// Preallocate a buffer of the right size.
-	size := 0
-	size += (4 + len(a0))
-	size += (4 + len(a1))
-	enc := codegen.NewEncoder()
-	enc.Reset(size)
-
-	// Encode arguments.
-	enc.String(a0)
-	enc.String(a1)
-	var shardKey uint64
-
-	// Call the remote method.
-	requestBytes = len(enc.Data())
-	var results []byte
-	results, err = s.stub.Run(ctx, 0, enc.Data(), shardKey)
-	replyBytes = len(results)
-	if err != nil {
-		err = errors.Join(weaver.RemoteCallError, err)
-		return
-	}
-
-	// Decode the results.
-	dec := codegen.NewDecoder(results)
-	err = dec.Error()
-	return
-}
 
 func (s portCache_client_stub) Get(ctx context.Context, a0 string) (r0 string, err error) {
 	// Update metrics.
@@ -422,12 +392,15 @@ func (s portCache_client_stub) Get(ctx context.Context, a0 string) (r0 string, e
 
 	// Encode arguments.
 	enc.String(a0)
-	var shardKey uint64
+
+	// Set the shardKey.
+	var r cacheRouter
+	shardKey := _hashPortCache(r.Get(ctx, a0))
 
 	// Call the remote method.
 	requestBytes = len(enc.Data())
 	var results []byte
-	results, err = s.stub.Run(ctx, 1, enc.Data(), shardKey)
+	results, err = s.stub.Run(ctx, 0, enc.Data(), shardKey)
 	replyBytes = len(results)
 	if err != nil {
 		err = errors.Join(weaver.RemoteCallError, err)
@@ -480,12 +453,15 @@ func (s portCache_client_stub) Put(ctx context.Context, a0 string, a1 string) (e
 	// Encode arguments.
 	enc.String(a0)
 	enc.String(a1)
-	var shardKey uint64
+
+	// Set the shardKey.
+	var r cacheRouter
+	shardKey := _hashPortCache(r.Put(ctx, a0, a1))
 
 	// Call the remote method.
 	requestBytes = len(enc.Data())
 	var results []byte
-	results, err = s.stub.Run(ctx, 2, enc.Data(), shardKey)
+	results, err = s.stub.Run(ctx, 1, enc.Data(), shardKey)
 	replyBytes = len(results)
 	if err != nil {
 		err = errors.Join(weaver.RemoteCallError, err)
@@ -543,10 +519,7 @@ func (s portReverse_client_stub) Reverse(ctx context.Context, a0 string) (r0 str
 
 	// Encode arguments.
 	enc.String(a0)
-
-	// Set the shardKey.
-	var r router
-	shardKey := _hashPortReverse(r.Reverse(ctx, a0))
+	var shardKey uint64
 
 	// Call the remote method.
 	requestBytes = len(enc.Data())
@@ -561,6 +534,69 @@ func (s portReverse_client_stub) Reverse(ctx context.Context, a0 string) (r0 str
 	// Decode the results.
 	dec := codegen.NewDecoder(results)
 	r0 = dec.String()
+	err = dec.Error()
+	return
+}
+
+type portWord_client_stub struct {
+	stub         codegen.Stub
+	parseMetrics *codegen.MethodMetrics
+}
+
+// Check that portWord_client_stub implements the PortWord interface.
+var _ PortWord = (*portWord_client_stub)(nil)
+
+func (s portWord_client_stub) Parse(ctx context.Context, a0 string) (err error) {
+	// Update metrics.
+	var requestBytes, replyBytes int
+	begin := s.parseMetrics.Begin()
+	defer func() { s.parseMetrics.End(begin, err != nil, requestBytes, replyBytes) }()
+
+	span := trace.SpanFromContext(ctx)
+	if span.SpanContext().IsValid() {
+		// Create a child span for this method.
+		ctx, span = s.stub.Tracer().Start(ctx, "main.PortWord.Parse", trace.WithSpanKind(trace.SpanKindClient))
+	}
+
+	defer func() {
+		// Catch and return any panics detected during encoding/decoding/rpc.
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+			if err != nil {
+				err = errors.Join(weaver.RemoteCallError, err)
+			}
+		}
+
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
+		}
+		span.End()
+
+	}()
+
+	// Preallocate a buffer of the right size.
+	size := 0
+	size += (4 + len(a0))
+	enc := codegen.NewEncoder()
+	enc.Reset(size)
+
+	// Encode arguments.
+	enc.String(a0)
+	var shardKey uint64
+
+	// Call the remote method.
+	requestBytes = len(enc.Data())
+	var results []byte
+	results, err = s.stub.Run(ctx, 0, enc.Data(), shardKey)
+	replyBytes = len(results)
+	if err != nil {
+		err = errors.Join(weaver.RemoteCallError, err)
+		return
+	}
+
+	// Decode the results.
+	dec := codegen.NewDecoder(results)
 	err = dec.Error()
 	return
 }
@@ -662,8 +698,6 @@ var _ codegen.Server = (*portCache_server_stub)(nil)
 // GetStubFn implements the codegen.Server interface.
 func (s portCache_server_stub) GetStubFn(method string) func(ctx context.Context, args []byte) ([]byte, error) {
 	switch method {
-	case "Append":
-		return s.append
 	case "Get":
 		return s.get
 	case "Put":
@@ -671,32 +705,6 @@ func (s portCache_server_stub) GetStubFn(method string) func(ctx context.Context
 	default:
 		return nil
 	}
-}
-
-func (s portCache_server_stub) append(ctx context.Context, args []byte) (res []byte, err error) {
-	// Catch and return any panics detected during encoding/decoding/rpc.
-	defer func() {
-		if err == nil {
-			err = codegen.CatchPanics(recover())
-		}
-	}()
-
-	// Decode arguments.
-	dec := codegen.NewDecoder(args)
-	var a0 string
-	a0 = dec.String()
-	var a1 string
-	a1 = dec.String()
-
-	// TODO(rgrandl): The deferred function above will recover from panics in the
-	// user code: fix this.
-	// Call the local method.
-	appErr := s.impl.Append(ctx, a0, a1)
-
-	// Encode the results.
-	enc := codegen.NewEncoder()
-	enc.Error(appErr)
-	return enc.Data(), nil
 }
 
 func (s portCache_server_stub) get(ctx context.Context, args []byte) (res []byte, err error) {
@@ -711,6 +719,8 @@ func (s portCache_server_stub) get(ctx context.Context, args []byte) (res []byte
 	dec := codegen.NewDecoder(args)
 	var a0 string
 	a0 = dec.String()
+	var r cacheRouter
+	s.addLoad(_hashPortCache(r.Get(ctx, a0)), 1.0)
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
@@ -738,6 +748,8 @@ func (s portCache_server_stub) put(ctx context.Context, args []byte) (res []byte
 	a0 = dec.String()
 	var a1 string
 	a1 = dec.String()
+	var r cacheRouter
+	s.addLoad(_hashPortCache(r.Put(ctx, a0, a1)), 1.0)
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
@@ -780,8 +792,6 @@ func (s portReverse_server_stub) reverse(ctx context.Context, args []byte) (res 
 	dec := codegen.NewDecoder(args)
 	var a0 string
 	a0 = dec.String()
-	var r router
-	s.addLoad(_hashPortReverse(r.Reverse(ctx, a0)), 1.0)
 
 	// TODO(rgrandl): The deferred function above will recover from panics in the
 	// user code: fix this.
@@ -791,6 +801,48 @@ func (s portReverse_server_stub) reverse(ctx context.Context, args []byte) (res 
 	// Encode the results.
 	enc := codegen.NewEncoder()
 	enc.String(r0)
+	enc.Error(appErr)
+	return enc.Data(), nil
+}
+
+type portWord_server_stub struct {
+	impl    PortWord
+	addLoad func(key uint64, load float64)
+}
+
+// Check that portWord_server_stub implements the codegen.Server interface.
+var _ codegen.Server = (*portWord_server_stub)(nil)
+
+// GetStubFn implements the codegen.Server interface.
+func (s portWord_server_stub) GetStubFn(method string) func(ctx context.Context, args []byte) ([]byte, error) {
+	switch method {
+	case "Parse":
+		return s.parse
+	default:
+		return nil
+	}
+}
+
+func (s portWord_server_stub) parse(ctx context.Context, args []byte) (res []byte, err error) {
+	// Catch and return any panics detected during encoding/decoding/rpc.
+	defer func() {
+		if err == nil {
+			err = codegen.CatchPanics(recover())
+		}
+	}()
+
+	// Decode arguments.
+	dec := codegen.NewDecoder(args)
+	var a0 string
+	a0 = dec.String()
+
+	// TODO(rgrandl): The deferred function above will recover from panics in the
+	// user code: fix this.
+	// Call the local method.
+	appErr := s.impl.Parse(ctx, a0)
+
+	// Encode the results.
+	enc := codegen.NewEncoder()
 	enc.Error(appErr)
 	return enc.Data(), nil
 }
@@ -823,11 +875,6 @@ type portCache_reflect_stub struct {
 // Check that portCache_reflect_stub implements the PortCache interface.
 var _ PortCache = (*portCache_reflect_stub)(nil)
 
-func (s portCache_reflect_stub) Append(ctx context.Context, a0 string, a1 string) (err error) {
-	err = s.caller("Append", ctx, []any{a0, a1}, []any{})
-	return
-}
-
 func (s portCache_reflect_stub) Get(ctx context.Context, a0 string) (r0 string, err error) {
 	err = s.caller("Get", ctx, []any{a0}, []any{&r0})
 	return
@@ -850,17 +897,29 @@ func (s portReverse_reflect_stub) Reverse(ctx context.Context, a0 string) (r0 st
 	return
 }
 
+type portWord_reflect_stub struct {
+	caller func(string, context.Context, []any, []any) error
+}
+
+// Check that portWord_reflect_stub implements the PortWord interface.
+var _ PortWord = (*portWord_reflect_stub)(nil)
+
+func (s portWord_reflect_stub) Parse(ctx context.Context, a0 string) (err error) {
+	err = s.caller("Parse", ctx, []any{a0}, []any{})
+	return
+}
+
 // Router methods.
 
-// _hashPortReverse returns a 64 bit hash of the provided value.
-func _hashPortReverse(r string) uint64 {
+// _hashPortCache returns a 64 bit hash of the provided value.
+func _hashPortCache(r string) uint64 {
 	var h codegen.Hasher
 	h.WriteString(string(r))
 	return h.Sum64()
 }
 
-// _orderedCodePortReverse returns an order-preserving serialization of the provided value.
-func _orderedCodePortReverse(r string) codegen.OrderedCode {
+// _orderedCodePortCache returns an order-preserving serialization of the provided value.
+func _orderedCodePortCache(r string) codegen.OrderedCode {
 	var enc codegen.OrderedEncoder
 	enc.WriteString(string(r))
 	return enc.Encode()
