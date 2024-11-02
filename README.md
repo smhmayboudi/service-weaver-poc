@@ -55,3 +55,10 @@ weaver multi dashboard
 weaver multi deploy weaver.toml
 weaver single deploy weaver.toml
 ```
+
+## Profile
+
+```SHELL
+$ profile=$(weaver multi profile <deployment>) # Collect the profile.
+$ go tool pprof -http=localhost:9000 $profile # Visualize the profile.
+```

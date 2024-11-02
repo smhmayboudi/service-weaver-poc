@@ -24,10 +24,6 @@ type (
 	reverseOption struct {
 		Greeting string
 	}
-
-	reverseLabel struct {
-		HelloParity string
-	}
 )
 
 var (
